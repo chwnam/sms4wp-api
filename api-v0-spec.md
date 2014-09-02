@@ -213,7 +213,14 @@ HTTP content로 전달되는 JSON에는 최소한 하나의 오브젝트가 포�
     - 파라미터는 모두 AND 조건으로 조회된다.
     - membership_id 항목이 제시되었을 때에는 반드시 membership_type 항목이 같이 제시되어야 한다. 그렇지 않으면 400 BAD REQUEST를 리턴한다.
   - returns:
-    - 사용자의 목록
+    - 사용자의 목록. 단 1명일지라도 리스트로 반환됩니다.
+    - id: 백엔드의 아이디 (pk)
+    - membership_type: 멤버십 타입 아이디 (fk)
+    - registered_timestamp: 등록일자
+    - membership_id: 멤버십 아이디 (해당 프론트엔드 유저 pk)
+    - email: 등록된 이메일
+    - user_group: 유저 그룹 아이디 (fk)
+    - user_status: 유저 상태 아이디 (fk)
 
 
 
