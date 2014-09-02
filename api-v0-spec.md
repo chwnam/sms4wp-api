@@ -1,72 +1,113 @@
-# API Specification Version 0 #
+# API 사양 설명서 버전 0 #
+
+**Korean version.**
+
+최종수정일 : 2014년 9월 2일.
+
+본 문서는 [sms4wp.com](http://www.sms4wp.com)의 버전 0 API 사양을 기술합니다.
+* * * 
+
+## 개괄 ##
+
+### API 티어 소개 ###
+
+API 측면에서 보았을 때 sms4wp.com은 2가지 계층으로 나누어 설명할 수 있습니다.
+
+* 1차 티어 (1st-tier)
+* 2차 티어 (2st-tier)
+
+1차 티어는 문자메시지를 보내기 위한 직접적인 API 계층입니다. 이 계층의 API는 통신사, 혹은 통신사의 문자 서비스와 직접적으로 관련된 곳에서 해당 통신사를 경유하는 메시지를 보내기 위한 절차를 일컫습니다. 다시 말해, 이 곳의 API는 우리가 *수정할 수 없으며 단지 이 곳의 API를 사용할 뿐입니다*. 
+
+2차 티어는 sms4wp가 서비스를 운용하면서 고객들에게 배포하는 우리들의 API 집합입니다. 본 문서는 이 2차 티어 API의 사양에 대해 설명합니다.
+
+
+### 서비스 레이어 소개 ###
+
+전반적인 관점에서 서비스는 3개의 계층으로 나뉘어집니다.
+
+* 1차 계층 (1st-layer): 서비스 제공자 계층 (Service provider layer)
+* 2차 계층 (2nd-layer): 서버 계층 (Server layer)
+* 3차 계층 (3rd-layer): 사용자 계층 (Client layer)
+
+서비스 제공자 계층(service provider layer)는 1차 API 티어를 제공하는 계층을 일컫습니다. 이 곳 또한 우리가 직접적으로 관리가 가능한 계층이 아닙니다.
+
+서버 계층(server layer)은 sms4wp.com의 서비스를 제공하는 계층입니다. 서버 계층은 다시 프론트엔드(frontend)와 백엔드(backend)로 나뉩니다.
+
+* 프론트엔드(frontend): 사용자의 전면에 나서서 서비스를 직접적으로 제공하는 인터페이스 계층입니다. 쉽게 말하면 눈에 보이는 대표 웹사이트([sms4wp.com](http://www.sms4wp.com))를 말합니다.
+* 백엔드(backend): 사용자에게 직접적으로 제시되지는 않으나 API를 처리하는 서비스의 핵심 계층입니다.
+
+사용자 계층(client layer)은 문자 서비스를 직접 이용하는 사용자를 위한 '어플리케이션 영역'입니다. 본 문서에는 '사용자(user)'와 '클라이언트(client)' 두 용어를 다른 의미로 사용합니다.
+
+* 사용자(user): 서비스를 사용하는 사람입니다.
+* 클라이언트(client): 사람이 사용하는 어플리케이션, 즉 사람이 아닌 프로그램을 말하니다.
 
 
 
-## Authentication ##
-인증은 http(s) 헤더 "AUTHENTICATION"을 사용한다. 헤더의 값은 'token' 이란 문자열, 그리고 사용자의 이메일과 인증 토큰를 콜론(:)으로 연결한 문자열이다.
-이 문자열은 앞선 'token' 문자열과는 공백으로 분리되어 있어야 한다.
-예를 들어 사용자의 이메일이 'bob@email.com'이고 인증 토큰가 'secretkey' 라고 하면 인증을 위해 request header에 다음을 추가해야 한다.
+## 데이터 전송 ##
 
-  AUTHENTICATION: token bob@email.com:secretkey
+주로 백엔드 서버 계층으로 데이터 전송이 이루어집니다. 이 때 [REST](http://en.wikipedia.org/wiki/Representational_state_transfer) 방식의 API를 사용합니다.
 
-
-
-## Sending Data ##
-백엔드 사이트와 데이터 통신을 위해 REST API를 사용한다.
 
 ### Methods ###
-HTTP method로 PUT, GET, POST, DELETE 이 네 가지를 주로 사용하게 된다. 이 네 메소드는 CRUD (Create - Retrieve - Update - Delete)
-네 작업과 1:1로 대응된다.
+
+HTTP method로 PUT, GET, POST, DELETE 이 네 가지를 주로 사용합니다. 이 네 메소드는 CRUD (Create - Retrieve - Update - Delete) 네 작업과 1:1로 대응합니다.
 
 #### PUT ####
-주로 서버에 새로운 정보를 전달(create)하는 경우에 사용된다. 단, create와 update 작업이 둘 다 이루어져야 하는 API의 경우에만 사용한다.
+주로 새로운 정보를 전달(create)하는 경우에 사용합니다. 단, create와 update 작업이 둘 다 이루어져야 하는 API의 경우에만 사용합니다.
 
 #### POST ####
-주로 서버에 새로운 정보를 전달하거나, 기존 정보를 수정하는 경우에 사용된다. 단 해당 API가 create만 필요한 경우에는 POST 메소드가 create
-작업을 맡아 처리하도록 하며, API가 create와 update를 둘 다 지원해야 하는 경우에는 PUT이 create를, POST가 update를 맡아 처리하도록 한다.
+주로 새로운 정보를 전달하거나, 기존 정보를 수정하는 경우에 사용합니다. 단 해당 API가 create만을 필요로 하는 경우에는 POST 메소드가 create 작업을 맡지만, API가 *create와 update를 둘 다 지원해야 하는 경우에는* PUT이 create를, POST가 update를 처리하도록 합니다.
 
 #### GET ####
-백엔드의 데이터를 조회할 때 사용한다. 파라미터가 없을 경우 해당 데이터의 전부를 리턴하며, 파라미터를 통해 데이터의 범위를 조절할 수 있도록 한다.
+데이터를 조회할 때 사용합니다. 파라미터가 없을 경우 해당 데이터의 전부를 리턴하며, 파라미터를 통해 데이터의 범위를 조절할 수 있도록 합니다.
 
 #### DELETE ####
-백엔드의 데이터를 삭제할 때 사용한다. 일부 데이터는 외래 키 제약에 의해 다음과 같은 작업이 발생할 수 있다.
+데이터를 삭제할 때 사용합니다. 일부 데이터는 외래 키 제약에 의해 다음과 같은 작업이 발생할 수 있다.
 
  1. 삭제가 불가능한 경우가 있을 수 있다. 이 경우 외래키의 레코드를 먼저 삭제해야만 한다.
  2. 데이터가 삭제되면서 외래키의 레코드 또한 같이 동시에 삭제될 수 있다.
 
 
+## 인증 ##
+인증은 http(s) 헤더 "AUTHENTICATION"을 사용합니다. 헤더의 값은 'token' 이란 문자열, 그리고 사용자의 이메일과 인증 토큰를 콜론(:)으로 연결한 문자열입니다 'token' 문자열과는 1개의 공백으로 분리되어 있어야 합니다.
 
-## Return Values ##
-백엔드 답신은 JSON 형태로 전달되며, 작업의 성공, 혹은 실패 여부는 HTTP response code를 보고 판단한다. 일례로 서버로부터 HTTP response code
-200이 전달되었다면 성공적인 응답이 왔음을 의미한다.
+예를 들어 사용자의 이메일이 'bob@email.com'이고 인증 토큰가 'secretkey' 라고 하면 인증을 위해 request header에 다음과 같은 헤더를 추가해 인증합니다.
 
-백엔드에서는 관례적으로 다음과 같은 HTTP response code를 주로 사용하게 된다.
-
-  - 200 OK                      두말할 것 없이 성공을 의미한다.
-  - 400 BAD REQUEST             파라미터 값의 에러 등의 요청 프로토콜이 맞지 않는 경우를 의미한다.
-  - 403 FORBIDDEN               인증되지 않음. 인증 토큰을 다시 확인해 보아야 한다.
-  - 404 NOT FOUND               해당 파라미터의 프로토콜은 올바르나, 서버에 자원이 없거나 찾을 수 없는 경우를 의미한다.
-  - 405 METHOD NOT ALLOWED      해당 API에서는 제시된 METHOD가 지원되지 않음을 의미한다.
-  - 406 NOT ACCEPTABLE          해당 API를 진행힐 수 없는 경우를 뜻한다. 일례로 SMS를 보내려고 하나, 포인트가 부족한 경우를 들 수 있다.
-  - 415 UNSUPPORTED MEDIA TYPE  벌크 메시지, 멀티미디어 메시지 등으로 첨부된 파일이 지원되지 않는 경우이다.
-  - 500 INTERNAL SEVER ERROR    해당 API를 처리하는 중 백엔드에서 프로그램 에러가 일어난 경우.
-  - 501 NOT IMPLEMENTED         해당 API는 아직 완전히 구현되지 않았음.
-
-HTTP content로 전달되는 JSON에는 최소한 'detail'이란 이름의 key를 포함하고 있으며 이 키의 값에는 백엔드 서버에서 전달하는 자세한 메시지가
-담겨 있다. 이외의 값들은 API의 종류에 따라 조금씩 차이가 난다.
+`AUTHENTICATION: token bob@email.com:secretkey`
 
 
-## API Definitions ##
+
+## 리턴 값 ##
+백엔드 답신은 JSON 형태로 전달되며, 작업의 성공, 혹은 실패 여부는 HTTP response code를 보고 판단합니다. 예를 들어 서버로부터 HTTP response code 200이 전달되었다면 성공적인 응답이 왔음을 의미합니다.
+
+관례적으로 다음과 같은 HTTP response code를 문맥에 따라 사용합니다.
+
+ 응답 코드 | 문자열                | 설명                                                        
+-------- | ------------------- | -----------------------------------------------------------
+200      |OK                   | 성공.                                                        
+400      | BAD REQUEST         | 파라미터 값의 에러 등의 요청 프로토콜이 맞지 않는 경우를 의미한다.
+403      | FORBIDDEN           | 인증되지 않음. 인증 토큰을 다시 확인해 보아야 한다.
+404      | NOT FOUND           | 해당 파라미터의 프로토콜은 올바르나, 서버에 자원이 없거나 찾을 수 없는 경우를 의미한다.
+405      | METHOD NOT ALLOWED  | 해당 API에서는 제시된 METHOD가 지원되지 않음을 의미한다.
+406      | NOT ACCEPTABLE      | 해당 API를 진행힐 수 없는 경우를 뜻한다. 일례로 SMS를 보내려고 하나, 포인트가 부족한 경우를 들 수 있다.
+415      | UNSUPPORTED MEDIA TYPE |  벌크 메시지, 멀티미디어 메시지 등으로 첨부된 파일이 지원되지 않는 경우이다.
+500      | INTERNAL SEVER ERROR   | 해당 API를 처리하는 중 백엔드에서 프로그램 에러가 일어난 경우.
+501      | NOT IMPLEMENTED        | 해당 API는 아직 완전히 구현되지 않았음.
+
+HTTP content로 전달되는 JSON에는 최소한 하나의 오브젝트가 포함되어 있습니다. 보통 이 오브젝트는 'detail'이란 이름의 key를 포함하고 있으며 이 키의 값은 서버에서 전달하는 보다 자세한 메시지입니다. 이외의 카-값들은 API의 종류에 따라 상이하며 아래 [API 정의](#api_def)에서 설명합니다.
+
+
+
+## [API 정의](id:api_def) ##
 
 ### 일러 두기 ###
-  1. 각 API의 명령은 URL로 구분된다. 해당 명령의 전체 경로는 URL_ROOT와 해당 경로의 문자열을 합친 것이다.
-  2. 현재 개발 서버의 URL_ROOT: http://backend.sms4wp.com/api/v0
-  3. backend.sms4wp.com IP는 54.92.100.248 이다. 이 주소를 hosts 파일에 등록해 두고 쓰기를 권한다.
-  4. 각 API의 경로 끝에는 반드시 슬래시(/)를 붙여야 한다.
+  1. 각 API의 명령은 URL로 구분합니다. 해당 명령의 전체 경로는 _URL_ROOT_와 해당 경로의 문자열을 합친 것입니다.
+     * 현재 개발 서버의 URL_ROOT: ``http://backend.sms4wp.com/api/v0``
+  2. 각 API의 경로 끝에는 반드시 슬래시(/)를 붙여야 합니다.
 
 ### Connection Check API - Who Am I ###
 
-경로: /whoami/
+경로: ``/whoami/``
 
 단순 연결 체크를 위한 API. 연결에 성공한 경우 백엔드에 저장된 자신의 유저 정보를 리턴한다.
 
@@ -74,7 +115,7 @@ HTTP content로 전달되는 JSON에는 최소한 'detail'이란 이름의 key�
   - parameter 없음.
 
 
-경로: /test_task/
+경로: ``/test_task/``
 
 백엔드의 분산 처리 시스템의 정상 동작을 체크하기 위한 API. 백엔드에 단순한 곱셈 연산을 수행시켜 본다. 관리자 계정만 수행 가능한 테스트이다.
 
@@ -94,7 +135,7 @@ HTTP content로 전달되는 JSON에는 최소한 'detail'이란 이름의 key�
 #### Granting ####
 인증 토큰을 발행하는 API. scope 값이 이미 기록되어 있는 경우 기존의 인증 토큰이 삭제되고 새로운 토큰으로 갱신된다.
 
-  - 경로: /auth_token/grant/
+  - 경로: ``/auth_token/grant/``
   - method: POST
     - id:     필수. 백엔드 사용자 id.
     - scope:  필수. 인증 토큰을 구분하는 태그의 개념이다. 이 파라미터의 값으로는 255자 미만의 문자열을 받는다.
@@ -103,7 +144,7 @@ HTTP content로 전달되는 JSON에는 최소한 'detail'이란 이름의 key�
 #### Revoking ####
 인증된 토큰을 회수하는 API. Revoke 된 이후에는 해당 인증 토큰을 사용할 수 없다. 그러나 데이터베이스 상에서 해당 토큰의 레코드가 삭제되는 것은 아니다.
 
-  - 경로: /auth_token/revoke/
+  - 경로: ``/auth_token/revoke/``
   - method: GET
     - id: 필수. 백엔드 사용자의 id.
 
@@ -111,7 +152,7 @@ HTTP content로 전달되는 JSON에는 최소한 'detail'이란 이름의 key�
 토큰을 삭제하는 API. API는 grant, revoke 여부와는 관계 없이 무조건적으로 토큰을 삭제한다.
 만일 토큰이 삭제되면 토큰과 관련된 모든 메시지 내역과 결과 자료가 사라질 수 있으니 사용에는 주의해야 한다.
 
-  - 경로: /auth_token/remove/
+  - 경로: ``/auth_token/remove/``
   - method: DELETE
     - id: 필수. 백엔드 사용자의 id.
 
@@ -119,7 +160,7 @@ HTTP content로 전달되는 JSON에는 최소한 'detail'이란 이름의 key�
 ### User Management API ###
 유저의 등록 및 관리를 위한 API.
 
-경로: /user/
+경로: ``/user/``
 
 #### Adding a User ####
 새로운 유저를 백엔드에 등록한다. 유저가 프론트 엔드 사이트에 가입 승인 되었을 때 백엔드로 호출해야 한다.
@@ -179,7 +220,7 @@ HTTP content로 전달되는 JSON에는 최소한 'detail'이란 이름의 key�
 ### Messaging API ###
 
 #### Sending ####
-  - 경로: /messaging/{sms,lms,mms}/
+  - 경로: ``/messaging/``
   - 메시지를 전송하는 API.
   - method: POST
   - parameters
@@ -200,7 +241,7 @@ HTTP content로 전달되는 JSON에는 최소한 'detail'이란 이름의 key�
                        아직 정확한 검증이 필요함.
 
 #### Reporting Sent Messages ####
-  - 경로: /messaging/report/[id]/
+  - 경로: ``/messaging/report/[id]/``
   - 전송된 메시지의 결과를 확인하는 API
   - method: GET
   - parameters
@@ -213,7 +254,7 @@ HTTP content로 전달되는 JSON에는 최소한 'detail'이란 이름의 key�
 유저의 포인트 관리를 위한 작업들이다.
 이 작업은 관리자의 인증 토큰이 필요하며, 일반 사용자는 단지 자신의 포인트 정보만을 조회할 수 있다.
 
-  경로: /point/
+  경로: ``/point/``
 
 #### Modify user Point ####
   - method: POST
@@ -244,7 +285,7 @@ HTTP content로 전달되는 JSON에는 최소한 'detail'이란 이름의 key�
 ### Transaction API ###
 유저가 소모, 혹은 생산한 포인트 내역을 조회한다.
 
-  경로: /transaction/
+  경로: ``/transaction/``
 
 #### Querying Transaction List ####
   - method: GET
