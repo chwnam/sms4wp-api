@@ -278,32 +278,34 @@ HTTP content로 전달되는 JSON에는 최소한 하나의 오브젝트가 포�
 ```
 	[
 		{
+			"auth_token_id": 1,
 			"user_id": 1,
 			"messages": {
 				"body": "message body",
 				"send_timestamp": null,
-				"results": {
-					"message_result_id": 1,
-					"message_resource_id": null,
-					"sender_name": null,
-					"report_timestamp": "2014-09-03T05:52:32",
-					"receiver_name": " ",
-					"receiver_phone": "01012345678",
-					"request_code": 200,
-					"request_description": "OK",
-					"report_code": 4100,
-					"report_description": "전달",
-					"message_type": "SMS",
-					"point_cost": 2,
-					"mime_type": null
-				},
 				"num_recipients": 1,
 				"is_test": false,
 				"sender_phone": "01098765432",
 				"message_id": 1,
-				"subject": "제목"
-			},
-			"auth_token_id": 1
+				"subject": "title example",
+				"results": [
+					{
+						"message_result_id": 1,
+						"message_resource_id": null,
+						"sender_name": null,
+						"report_timestamp": "2014-09-03T05:52:32",
+						"receiver_name": " ",
+						"receiver_phone": "01012345678",
+						"request_code": 200,
+						"request_description": "OK",
+						"report_code": 4100,
+						"report_description": "전달",
+						"message_type": "SMS",
+						"point_cost": 2,
+						"mime_type": null
+					}	
+				]
+			}
 		}
 	]
 ```
