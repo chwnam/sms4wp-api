@@ -4,9 +4,97 @@
 * * *
  
 ## 일반 API
+주소 접두: http://backend.sms4wp.com/api/v1
+
+### 사용자 관리
+#### 사용자 정보
+* 요청 주소: ``/user/``
+* 메소드: GET
+* 요청 파라미터: 없음
+* 응답 파라미터
+  *  
+
+### 메시지 내역 조회
+#### 메시지 전송
+* 요청 주소
+  * SMS: ``/message/sms/``
+  * LMS: ``/message/lms/``
+  * MMS: ``/message/mms/``
+* SMS 전송 요청 파라미터
+  * 단보 전송
+  * 동보 전송
+  * 벌크 전송
+* LMS 전송 요청 파라미터
+  * 단보 전송
+  * 동보 전송
+  * 벌크 전송 
+* MMS 전송 요청 파라미터
+  * 단보 전송
+  * 동보 전송
+  * 벌크 전송: MMS는 벌크 전송을 지원하지 않는다. 
+
+#### 내역 조회
+인증 토큰으로 전송한 메시지 내역을 조회합니다.
+
+* 요청 주소: ``/message/``
+* 메소드: GET
+* 요청 파라미터
+  * since
+  * until
+  * limit
+* 응답 파라미터 
+  * 
+
+
+
+
+### 포인트 관리
+
+      
+#### 포인트 조회
+인증 토큰 소유자의 포인트 내역을 조회합니다.
+
+* 요청 주소: ``/user_point/``
+* 메소드: GET
+* 요청 파라미터: 없음
+* 응답 파라미터
+  * id
+  * user_id
+  * value
+
+
+
+
+    
+### 포인트 증감 내역 조회
+
+#### 포인트 증감 내역
+인증 토큰 소유자의 포인트 변동 사항을 조회합니다.
+
+* 요청 주소: ``/transaction/``
+* 메소드: GET
+* 요청 파라미터
+  * since
+  * until
+  * limit
+* 응답 파라미터
+  * id
+  * user_id
+  * point_id
+  * value
+  * description
+  * timestamp
+
+
+
+
+
+
 
 ## 관리자 전용 API
-주소 접두: ``http://backend.sms4wp.com/api/v1/admin/``
+주소 접두: ``http://backend.sms4wp.com/api/v1/admin``
+
+
 
 ### 사용자 관리
 
@@ -16,6 +104,8 @@
 * 요청 파라미터
   * membership_id
   * membership_type_name
+  * email
+  * user_group_name
 * 응답 파라미터 
   * id
   * membership_type
@@ -29,6 +119,7 @@
 * 요청 주소: ``/user/``
 * 메소드: GET
 * 요청 파라미터
+  * id
   * membersip_id
   * membership_type_name
   * user_group_name
@@ -47,9 +138,6 @@
 * 메소드: POST
 * 요청 파라미터
   * id
-  * membership_type_name
-  * registered_timestamp
-  * membership_id
   * email
   * user_group_name
   * user_status_name
@@ -147,24 +235,18 @@
 
 
 
+### 포인트 관리
 
-### 메시지 내역 조회
-
-#### 내역 조회
-* 요청 주소: ``/message/``
+#### 포인트 조회
+* 요청 주소: ``/user_point/``
 * 메소드: GET
 * 요청 파라미터
-  * auth_token_id
-  * since
-  * until
-  * limit
-* 응답 파라미터 
-  * 
+  * user_id
+* 응답 파라미터
+  * id
+  * user_id
+  * value
 
-
-
-
-### 포인트 관리
 
 #### 포인트 조정
 * 요청 주소: ``/user_point/``
@@ -173,7 +255,6 @@
   * user_id
   * value
   * description
-  * timestamp
 * 응답 파라미터
   * user_point
     * id
@@ -186,17 +267,25 @@
     * value
     * description
     * timestamp
-      
-#### 포인트 조회
-* 요청 주소: ``/user_point/``
+
+
+
+
+
+### 메시지 내역 조회
+
+#### 내역 조회
+* 요청 주소: ``/message/``
 * 메소드: GET
 * 요청 파라미터
-  * user_id
-* 응답 파라미터
-  * id
-  * user_id
-  * value
-
+  * user_id 
+  * auth_token_id
+  * message_id
+  * since
+  * until
+  * limit
+* 응답 파라미터 
+  * 
 
 
 
@@ -206,26 +295,17 @@
 #### 포인트 증감 내역
 * 요청 주소: ``/transaction/``
 * 메소드: GET
-
-요청 파라미터
-
-파라미터  | 필수   | 설명
---------|-------|------
-user_id | 필수   | 백엔드 유저 아이디
-since   | 옵션   | 
-until   | 옵션   |
-limit   | 옵션   |
-
-응답 파라미터
-
-파라미터      | 설명
-------------|----------
-id          | 증감 내역 아이디          |
-user_id     | 백엔드 유저 아이디        |
-point_id    | 포인트 아이디            |
-value       | 증감값                 |
-description | 증감 내역 설명           |
-timestamp   | 기록 시간               |
-
+* 요청 파라미터
+  * user_id
+  * since
+  * until
+  * limit
+* 응답 파라미터
+  * id
+  * user_id
+  * point_id
+  * value
+  * description
+  * timestamp
 
 
