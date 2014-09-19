@@ -102,9 +102,9 @@
 * 요청 주소: ``/user/``
 * 메소드: PUT
 * 요청 파라미터
-  * membership_id
+  * membership_id: 복수 지정 가능
   * membership_type_name
-  * email
+  * email: 복수 지정 가능
   * user_group_name
 * 응답 파라미터 
   * id
@@ -122,6 +122,7 @@
   * id
   * membersip_id
   * membership_type_name
+  * email
   * user_group_name
   * user_status_name
 * 응답 파라미터 
@@ -138,6 +139,8 @@
 * 메소드: POST
 * 요청 파라미터
   * id
+  * membership_id
+  * membership_type_name
   * email
   * user_group_name
   * user_status_name
@@ -308,4 +311,15 @@
   * description
   * timestamp
 
+
+
+
+### 시스템 체크
+
+#### 분산처리 서버 체크
+* 요청 주소: ``/test_task/``
+* 메소드: GET
+  * x
+  * y
+* 응답 파라미터 
 
