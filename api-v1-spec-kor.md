@@ -153,8 +153,8 @@
       * 필수 요청 파라미터: 다음 항목은 반드시 포함되어야 합니다.
         * sender_phone: 송신자의 전화번호이니다.
         * message_body: 메시지 본문입니다.
-        * number: 수신자의 전화번호입니다. 동보 전송의 경우 name 파라미터와 순서를 동일하게 맞추어 주어야 합니다. 여러 전화번호를 지정할 경우 ``number**[]**=XXXXXX&number[]=YYYYYY&...`` 와 같이 number 뒤에 대괄호를 붙여 주세요.
-        * name: 수신자의 이름이니다. 동보 전송의 경우 number 파라미터와 순서를 맞추어야 합니다. 여러 전화번호를 지정할 경우 ``name[]=XXXXXX&name[]=YYYYYY&...`` 처럼 name 뒤에 대괄호를 붙여 주세요.
+        * receiver_number: 수신자의 전화번호입니다. 동보 전송의 경우 name 파라미터와 순서를 동일하게 맞추어 주어야 합니다. 여러 전화번호를 지정할 경우 ``number**[]**=XXXXXX&number[]=YYYYYY&...`` 와 같이 number 뒤에 대괄호를 붙여 주세요.
+        * receiver_name: 수신자의 이름이니다. 동보 전송의 경우 number 파라미터와 순서를 맞추어야 합니다. 여러 전화번호를 지정할 경우 ``name[]=XXXXXX&name[]=YYYYYY&...`` 처럼 name 뒤에 대괄호를 붙여 주세요.
       * 선택 요청 파라미터: 다음 항목은 선택적으로 지정할 수 있습니다.
         * sender_name: 송신자의 이름을 지정할 수 있습니다.
         * message_subject: 메시지 제목을 설정할 수 있습니다.
@@ -168,15 +168,117 @@
           1. 파일은 xls, xlsx를 지원합니다. csv는 지원하지 않습니다. 
           2. 메시지 내용은 모두 첫번째 시트에 위치해야 합니다.
           3. 시트의 데이터는 2행부터이며, 1행은 헤더를 위한 곳입니다. 헤더의 텍스트는 임의로 정할 수 있으나 각 필드의 순서는 다음과 같이 정해져 있습니다.
-             * ㅁ
-             * ㅂ
+             * 발송 시간
+               * 예약 전송을 하지 않을 경우에는 비워 둡니다.
+               * 다른 API와는 달리 여기서는 날짜 형식을 'YYYYMMDDHHMMSS' 형식으로 맞추어 주십시오. 가령 2014년 09월 29일 오후 09시 33분 00초에 문자를 보낸다면, '20140929093300'입니다. 또한 여기서는 KST(대한민국) 지역 시간대를 사용합니다.
+             * 수신자 번호
+             * 수신자 이름
+             * 발신자 번호
+             * 발신자 이름
+             * 제목
+             * 내용
+             
 * MMS 전송 요청 파라미터
   * SMS와 LMS 전송과 동일하나 다음 파라미터를 추가로 받습니다.
     * file:
   * MMS 전송은 벌크 전송을 지원하지 않습니다.
 * 응답 파라미터
   * 세 방식 모두 같은 응답 형태를 취합니다.
+  * id: 메시지 아이디.
+  * user: 백엔드 유저 아이디.
+  * auth_token: 유저의 인증 토큰 아이디.
+  * timestamp: 메시지 전송 요청 시각.
+  * message_type: 송신한 메시지 형태에 대한 정보
+    * id: 메시지 아이디 타입 아이디
+    * type: 메시지 타입 (SMS, LMS, MMS)
+    * point_cost: 메시지가 소모하는 포인트
+  * message_detail: 메시지 상세 내역
+    * message: 상세 내역 아아디
+    * send_timestamp: 예약 설정 일시. 즉시 전송일 경우 null.
+    * sender_phone: 발신자 전화번호.
+    * sender_name: 발신자 이름.
+    * subject: 메시지 제목.
+    * body: 메시지 본문.
+    * num_recipients: 수신자 수.
+    * is_test: 테스트 여부
+    * request_status: 송신 요청 상태
+      * id: 상태 아이디
+      * code: 코드
+      * description: 코드의 설명
+    * transaction: 포인트 소모 내역
+      * id: 내역 아이디
+      * user: 사용자 아이디
+      * point: 포인트 아이디
+      * value: 소모한 포인트
+      * description: 소모 내역 설명
+      * timestamp: 소모가 일어난 시각
+    * message_results: 메시지 결과 정보
+      * id: 결과 아이디
+      * report_status: 메시지 전송 상태 보고
+        * id: 전송 상태 아이디
+        * code: 전송 상태 코드
+        * description: 상태 설명
+      * transaction: 상위 노드의 transaction과 동일합니다. 이 값이 null이 아닌 경우는 해당 메시지가 정상적으로 전송되지 않아 포인트가 회수된 것입니다.
+      * report_timestamp: 보고 확인 시각
+      * receiver_phone: 수신자 전화번호
+      * receiver_name: 수신자 이름
+    * message_resources: 메시지 첨부 파일 내역. 벌크 메시지, 혹은 MMS 이미지 첨부의 경우 null이 아닌 값으로 채워집니다.
+      * id: 파일 내역 아이디
+      * message: 메시지 아이디.
+      * mime_type: 파일의 MIME type.
   
+메시지 응답의 예
+```
+{
+	"message_type": {
+		"id": 1,
+		"type": "SMS",
+		"point_cost": 1
+	},
+	"message_detail": {
+		"request_status": {
+			"id": 3,
+			"code": 200,
+			"description": "OK"
+		},
+		"transaction": {
+			"id": 13,
+			"user": 5,
+			"point": 6,
+			"value": -1,
+			"description": "Messaging transaction by user id=5",
+			"timestamp": "2014-09-23T00:29:35"
+		},
+		"message_results": [
+			{
+				"report_status": {
+					"id": 2,
+					"code": 4100,
+					"description": "전달"
+				},
+				"transaction": null,
+				"id": 10,
+				"report_timestamp": "2014-09-23T00:29:38",
+				"receiver_phone": "010XXXXYYYY",
+				"receiver_name": ""
+			}
+		],
+		"message": 10,
+		"send_timestamp": null,
+		"sender_phone": "010XXXXYYYY",
+		"sender_name": "",
+		"subject": "",
+		"body": "API Test",
+		"num_recipients": 1,
+		"is_test": false
+	},
+	"message_resources": [],
+	"id": 10,
+	"user": 5,
+	"auth_token": 7,
+	"timestamp": "2014-09-23T00:29:30"
+}
+```
 
 #### 내역 조회
 인증 토큰으로 전송한 메시지 내역을 조회합니다. 내역은 항상 시간을 기준으로 정렬되며 최근 시간 순으로 출력됩니다.
@@ -184,10 +286,12 @@
 * 요청 주소: ``/message/``
 * 메소드: GET
 * 요청 파라미터
+  * message_id: 메시지 아이디를 지정 가능합니다. 여러 메시지 아이디를 지정할 수 있습니다. 단, API 호출 헤더에 지정된 인증 토큰으로 보내지 않은 메시지에 대해서는 조회할 수 없습니다.
   * since: 이 일시보다 지난 내역을 검색합니다. 생략 가능합니다.
   * until: 이 일시보다 전의 내역을 검색합니다. 생략 가능합니다.
   * limit: 한 번에 가져올 개수를 지정합니다. 생략 가능하며 지정하지 않을 시 서버에서 지정한 최대 개수를 지정합니다.
-* 응답 파라미터 
+* 응답 파라미터
+  * 메시지 전송의 응답 파라미터와 동일한 형태의 JSON 오브젝트가 리스트로 출력됩니다.  
   
   
 
