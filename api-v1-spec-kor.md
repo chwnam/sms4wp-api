@@ -5,44 +5,76 @@
 
 ## 일러두기
 
-### URL Encoding
-* RFC1738
 
-
-
-### Content-Type
-
-* application/x-www-form-urlencoded
-* multipart/form-data
-* application/octet-stream
-* application/vnd.ms-excel
-* application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
-* image/jpeg
-
-
-
-### 날짜 표기
-파라미터에서 사용되는 일시 표기는 모두 [ISO8601](http://www.w3.org/TR/NOTE-datetime)을 준수합니다. 또한 백엔드 서버는 기본적으로 UTC를 사용합니다. 시간대 표기가 없는 경우 UTC로 간주됩니다만, 시간대 표기를 항상 명시할 것을 권고합니다.
-
-* 예
-  1. **2014-09-01T12:00:30Z**: UTC 2014년 09월 01일 12시 00분 30초. 참고로 이 때 서울은 21시 00분 30초.
-  2. **2014-09-01T23:30:12+09:00**: Offset +9h, 즉 한국 현지시각으로 2014년 09월 01일 오후 11시 30분 12초.
-  3. **2014-10-22T07:30:00**: 시간대가 정해지지 않았습니다. 이 경우 UTC로 간주합니다.
 
 
 
 ### API 인증 키
 #### 발급
+발급은 현재 클라이언트 플러그인에서만 가능합니다.
+
 #### 사용
+인증은 http(s) 헤더 "AUTHENTICATION"을 사용합니다. 헤더의 값은 'token' 이란 문자열, 그리고 사용자의 이메일과 인증 토큰를 콜론(:)으로 연결한 문자열입니다 'token' 문자열과는 1개의 공백으로 분리되어 있어야 합니다.
+
+예를 들어 사용자의 이메일이 'bob@email.com'이고 인증 토큰이 'secretkey' 라고 하면 인증을 위해 request header에 다음과 같은 헤더를 추가합니다.
+
+``AUTHENTICATION: token bob@email.com:secretkey``
 
  
 ### API 입력 파라미터와 응답
 #### 메소드
+HTTP 메소드로 PUT, GET, POST, DELETE 이 네 가지를 주로 사용합니다. 이 네 메소드는 CRUD (Create - Retrieve - Update - Delete) 네 작업과 1:1로 대응합니다.
+
+##### PUT
+주로 새로운 정보를 전달(create)하는 경우에 사용합니다. 단, create와 update 작업이 둘 다 이루어져야 하는 API의 경우에만 사용합니다.
+
+##### POST
+주로 새로운 정보를 전달하거나, 기존 정보를 수정하는 경우에 사용합니다. 단 해당 API가 create만을 필요로 하는 경우에는 POST 메소드가 create 작업을 맡지만, API가 *create와 update를 둘 다 지원해야 하는 경우에는* PUT이 create를, POST가 update를 처리하도록 합니다.
+
+##### GET
+데이터를 조회할 때 사용합니다. 파라미터가 없을 경우 해당 데이터의 전부를 리턴하며, 파라미터를 통해 데이터의 범위를 조절할 수 있도록 합니다.
+
+##### DELETE
+데이터를 삭제할 때 사용합니다.
+
+
+#### 날짜 표기
+파라미터에서 사용되는 일시 표기는 모두 [ISO8601](http://www.w3.org/TR/NOTE-datetime)을 준수합니다. 또한 백엔드 서버는 기본적으로 UTC를 사용합니다. 시간대 표기가 없는 경우 UTC로 간주됩니다만, 시간대 표기를 항상 명시할 것을 권고합니다.
+
+* 예
+  - **2014-09-01T12:00:30Z**: UTC 2014년 09월 01일 12시 00분 30초. 참고로 이 때 서울은 21시 00분 30초.
+  - **2014-09-01T23:30:12+09:00**: Offset +9h, 즉 한국 현지시각으로 2014년 09월 01일 오후 11시 30분 12초.
+  - **2014-10-22T07:30:00**: 시간대가 정해지지 않았습니다. 이 경우 UTC로 간주합니다.
+
+#### Content-Type
+
+입력 파라미터를 전송할 때 content type으로는 ``multipart/form-data``, ``application/x-www-form-urlencoded`` 둘 다 구분없이 사용 가능합니다.
+
 #### 입력 파라미터
-#### 응답
+일부 API에서는 한 파라미터에 여러 값을 순차적으로 입력할 수 있습니다. 가령 파라미터 'param'의 값으로 1, 2, 3, 4, 5를 차례로 입력해야 한다고 하면, 
+```
+param[]=1&param[]=2&param[]=3&param[]=4&param[]5
+```
+과 같이 목록으로 입력 가능합니다.
 
+#### 응답 값
+백엔드 답신은 JSON 형태로 전달되며, 작업의 성공, 혹은 실패 여부는 HTTP response code를 보고 판단합니다. 예를 들어 서버로부터 HTTP response code 200이 전달되었다면 성공적인 응답이 왔음을 의미합니다.
 
-### cURL을 이용한 API 호출 예제 
+관례적으로 다음과 같은 HTTP response code를 문맥에 따라 사용합니다.
+
+ 응답 코드 | 문자열                | 설명                                                        
+-------- | ------------------- | -----------------------------------------------------------
+200      |OK                   | 성공.                                                        
+400      | BAD REQUEST         | 파라미터 값의 에러 등의 요청 프로토콜이 맞지 않는 경우를 의미한다.
+403      | FORBIDDEN           | 인증되지 않음. 인증 토큰을 다시 확인해 보아야 한다.
+404      | NOT FOUND           | 해당 파라미터의 프로토콜은 올바르나, 서버에 자원이 없거나 찾을 수 없는 경우를 의미한다.
+405      | METHOD NOT ALLOWED  | 해당 API에서는 제시된 METHOD가 지원되지 않음을 의미한다.
+406      | NOT ACCEPTABLE      | 해당 API를 진행할 수 없는 경우를 뜻한다. 일례로 SMS를 보내려고 하나, 포인트가 부족한 경우를 들 수 있다.
+415      | UNSUPPORTED MEDIA TYPE |  벌크 메시지, 멀티미디어 메시지 등으로 첨부된 파일이 지원되지 않는 경우이다.
+500      | INTERNAL SEVER ERROR   | 해당 API를 처리하는 중 백엔드에서 프로그램 에러가 일어난 경우.
+501      | NOT IMPLEMENTED        | 해당 API는 아직 완전히 구현되지 않았음.
+
+단, GET으로 질의하는 '검색'에 해당하는 API의 경우에는 검색 결과가 없어도 200을 반환합니다. 이 때 결과로는 빈 리스트가 전달되니다.
 
 
 ## 일반 API
@@ -613,3 +645,5 @@ SMS와 LMS 전송과 동일하나 다음 파라미터를 추가로 받습니다.
   * y
 * 응답 파라미터 
 
+
+## cURL을 이용한 API 호출 예제 
