@@ -153,7 +153,7 @@
       * 필수 요청 파라미터: 다음 항목은 반드시 포함되어야 합니다.
         * sender_phone: 송신자의 전화번호이니다.
         * message_body: 메시지 본문입니다.
-        * receiver_number: 수신자의 전화번호입니다. 동보 전송의 경우 name 파라미터와 순서를 동일하게 맞추어 주어야 합니다. 여러 전화번호를 지정할 경우 ``number**[]**=XXXXXX&number[]=YYYYYY&...`` 와 같이 number 뒤에 대괄호를 붙여 주세요.
+        * receiver_number: 수신자의 전화번호입니다. 동보 전송의 경우 name 파라미터와 순서를 동일하게 맞추어 주어야 합니다. 여러 전화번호를 지정할 경우 ``number[]=XXXXXX&number[]=YYYYYY&...`` 와 같이 number 뒤에 대괄호를 붙여 주세요.
         * receiver_name: 수신자의 이름이니다. 동보 전송의 경우 number 파라미터와 순서를 맞추어야 합니다. 여러 전화번호를 지정할 경우 ``name[]=XXXXXX&name[]=YYYYYY&...`` 처럼 name 뒤에 대괄호를 붙여 주세요.
       * 선택 요청 파라미터: 다음 항목은 선택적으로 지정할 수 있습니다.
         * sender_name: 송신자의 이름을 지정할 수 있습니다.
