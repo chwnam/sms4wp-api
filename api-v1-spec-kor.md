@@ -84,11 +84,11 @@ API를 통해 전화번호를 입력할 때에는 단순히 0~9까지 숫자의 
 발급은 현재 클라이언트 플러그인에서만 가능합니다.
 
 #### 사용
-인증은 http(s) 헤더 "Authorization"을 사용합니다. 헤더의 값은 'token' 이란 문자열, 그리고 사용자의 이메일과 인증 토큰를 콜론(:)으로 연결한 문자열입니다 'token' 문자열과는 1개의 공백으로 분리되어 있어야 합니다.
+인증은 http(s) 헤더 "Authorization"을 사용합니다. 헤더의 값은 'token' 이란 문자열, 그리고 인증 토큰 콜론(:)으로 연결한 문자열입니다 'token' 문자열과는 1개의 공백으로 분리되어 있어야 합니다.
 
-예를 들어 사용자의 이메일이 'bob@email.com'이고 인증 토큰이 'secretkey' 라고 하면 인증을 위해 request header에 다음과 같은 헤더를 추가합니다.
+예를 들어 인증 토큰이 'secretkey' 라고 하면 인증을 위해 request header에 다음과 같은 헤더를 추가합니다.
 
-``Authorization: token bob@email.com:secretkey``
+``Authorization: token secretkey``
 
 
 ### API 입력 파라미터와 응답
